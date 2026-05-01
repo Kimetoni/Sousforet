@@ -206,11 +206,11 @@
             letter-spacing: 2px;
             text-transform: uppercase;
         }
-        /* --- OPTIMIERUNG FÜR PDF-EXPORT (INKLUSIVE KONFIGURATOR) --- */
+       /* --- OPTIMIERUNG FÜR PDF-EXPORT (BILDER NEBENEINANDER & KONFIGURATOR) --- */
 @media print {
     @page {
         size: A4 portrait;
-        margin: 1.5cm;
+        margin: 1cm;
     }
     body {
         -webkit-print-color-adjust: exact !important;
@@ -221,53 +221,57 @@
     /* Hero-Sektion anpassen */
     .hero {
         height: auto !important;
-        padding: 4cm 0 !important;
+        padding: 3cm 0 !important;
         page-break-after: always;
     }
     .hero img {
-        max-width: 80% !important;
+        max-width: 65% !important; /* Etwas kleiner, damit alles gut auf A4 passt */
         box-shadow: none !important;
     }
     
-    /* Story-Bilder und Texte perfekt auf A4 verteilen */
+    /* STORY-SEKTION: BILDER NEBENEINANDER ERZWINGEN */
     .feature-grid {
-        display: block !important;
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important; /* Zwingt die 3 Elemente nebeneinander */
+        gap: 20px !important; /* Abstände für das Papier etwas verkleinern */
     }
     .feature-item {
         page-break-inside: avoid !important;
-        margin-bottom: 2cm !important;
+        margin-bottom: 0 !important;
     }
     .img-wrapper {
         height: auto !important;
-        max-height: 12cm !important;
+        max-height: 8cm !important; 
         page-break-inside: avoid !important;
         box-shadow: none !important;
     }
     .img-wrapper img {
-        max-height: 12cm !important;
+        max-height: 8cm !important;
         object-fit: cover !important;
     }
+    /* Schriften für den 3-Spalten-Druck leicht anpassen */
+    .feature-item h2 { font-size: 1.5em !important; }
+    .feature-item p { font-size: 0.85em !important; line-height: 1.5 !important; }
     
-    /* Material-Sektion auf eine neue Seite */
+    /* MATERIAL-SEKTION: BEIDE SPALTEN NEBENEINANDER */
     .material-section {
         page-break-before: always !important;
-        padding: 2cm 1cm !important;
+        padding: 1.5cm 1cm !important;
     }
     .material-grid {
-        display: block !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important; /* Zwingt 2 Spalten nebeneinander */
+        gap: 30px !important;
     }
-    .mat-item {
-        page-break-inside: avoid !important;
-        margin-bottom: 1.5cm !important;
-    }
+    .mat-item h3 { font-size: 1.5em !important; }
+    .mat-item p { font-size: 0.9em !important; }
 
-    /* --- KONFIGURATOR FÜR DEN DRUCK SICHTBAR MACHEN --- */
+    /* --- KONFIGURATOR FÜR DEN DRUCK --- */
     #konfigurator {
         display: block !important;
-        page-break-before: always !important; /* Startet sauber auf einer neuen Seite */
+        page-break-before: always !important; /* Startet auf einer neuen Seite */
+        padding-top: 1cm !important;
     }
-    
-    /* Dem Iframe eine feste Höhe geben, damit er auf A4 nicht abgeschnitten wird */
     .config-iframe-wrapper iframe {
         height: 1400px !important; 
         width: 100% !important;
