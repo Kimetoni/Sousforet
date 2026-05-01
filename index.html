@@ -206,89 +206,35 @@
             letter-spacing: 2px;
             text-transform: uppercase;
         }
-       /* --- OPTIMIERUNG FÜR PDF-EXPORT (BILDER NEBENEINANDER & KONFIGURATOR) --- */
-@media print {
-    @page {
-        size: A4 portrait;
-        margin: 1cm;
-    }
-    body {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        background-color: #fdfdfd !important;
-    }
-    
-    /* Hero-Sektion anpassen */
-    .hero {
-        height: auto !important;
-        padding: 3cm 0 !important;
-        page-break-after: always;
-    }
-    .hero img {
-        max-width: 65% !important; /* Etwas kleiner, damit alles gut auf A4 passt */
-        box-shadow: none !important;
-    }
-    
-    /* STORY-SEKTION: BILDER NEBENEINANDER ERZWINGEN */
-    .feature-grid {
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important; /* Zwingt die 3 Elemente nebeneinander */
-        gap: 20px !important; /* Abstände für das Papier etwas verkleinern */
-    }
-    .feature-item {
-        page-break-inside: avoid !important;
-        margin-bottom: 0 !important;
-    }
-    .img-wrapper {
-        height: auto !important;
-        max-height: 8cm !important; 
-        page-break-inside: avoid !important;
-        box-shadow: none !important;
-    }
-    .img-wrapper img {
-        max-height: 8cm !important;
-        object-fit: cover !important;
-    }
-    /* Schriften für den 3-Spalten-Druck leicht anpassen */
-    .feature-item h2 { font-size: 1.5em !important; }
-    .feature-item p { font-size: 0.85em !important; line-height: 1.5 !important; }
-    
-    /* MATERIAL-SEKTION: BEIDE SPALTEN NEBENEINANDER */
-    .material-section {
-        page-break-before: always !important;
-        padding: 1.5cm 1cm !important;
-    }
-    .material-grid {
-        display: grid !important;
-        grid-template-columns: repeat(2, 1fr) !important; /* Zwingt 2 Spalten nebeneinander */
-        gap: 30px !important;
-    }
-    .mat-item h3 { font-size: 1.5em !important; }
-    .mat-item p { font-size: 0.9em !important; }
-
-   /* --- KONFIGURATOR FÜR DEN DRUCK --- */
+      /* --- KONFIGURATOR ALS EINE PERFEKTE SEITE DRUCKEN --- */
     #konfigurator {
         display: block !important;
         page-break-before: always !important; 
-        padding-top: 0.5cm !important;
+        padding-top: 1cm !important;
     }
     
     .config-header {
-        margin-bottom: 1cm !important; /* Platz sparen */
+        margin-bottom: 0.5cm !important; 
     }
 
+    /* Der "Bilderrahmen" auf dem A4-Blatt */
     .config-iframe-wrapper {
+        position: relative !important;
         width: 100% !important;
-        height: auto !important;
-        overflow: visible !important;
-        page-break-inside: avoid !important; /* Verhindert, dass der Iframe in der Mitte zerrissen wird */
+        height: 22cm !important; /* Reserviert den exakten Platz auf dem Papier */
+        overflow: hidden !important;
+        page-break-inside: avoid !important;
     }
 
+    /* Das eigentliche Konfigurator-Fenster */
     .config-iframe-wrapper iframe {
-        width: 100% !important;
-        height: 1800px !important; /* Höhe massiv erhöht, damit nichts abgeschnitten wird */
-        max-height: none !important;
-        overflow: visible !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 1300px !important; /* Täuscht dem Konfigurator einen breiten Monitor vor */
+        height: 1200px !important; /* Gibt ihm genug Platz nach unten */
+        transform: scale(0.55) !important; /* Schrumpft das Ganze auf exakt 55%, damit es aufs Blatt passt */
+        transform-origin: top left !important; /* Skaliert sauber von der oberen linken Ecke aus */
         border: none !important;
     }
 }
