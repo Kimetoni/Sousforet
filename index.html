@@ -266,16 +266,30 @@
     .mat-item h3 { font-size: 1.5em !important; }
     .mat-item p { font-size: 0.9em !important; }
 
-    /* --- KONFIGURATOR FÜR DEN DRUCK --- */
+   /* --- KONFIGURATOR FÜR DEN DRUCK --- */
     #konfigurator {
         display: block !important;
-        page-break-before: always !important; /* Startet auf einer neuen Seite */
-        padding-top: 1cm !important;
+        page-break-before: always !important; 
+        padding-top: 0.5cm !important;
     }
-    .config-iframe-wrapper iframe {
-        height: 1400px !important; 
+    
+    .config-header {
+        margin-bottom: 1cm !important; /* Platz sparen */
+    }
+
+    .config-iframe-wrapper {
         width: 100% !important;
+        height: auto !important;
         overflow: visible !important;
+        page-break-inside: avoid !important; /* Verhindert, dass der Iframe in der Mitte zerrissen wird */
+    }
+
+    .config-iframe-wrapper iframe {
+        width: 100% !important;
+        height: 1800px !important; /* Höhe massiv erhöht, damit nichts abgeschnitten wird */
+        max-height: none !important;
+        overflow: visible !important;
+        border: none !important;
     }
 }
     </style>
