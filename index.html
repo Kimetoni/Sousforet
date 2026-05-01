@@ -280,6 +280,65 @@
     <footer>
         &copy; 2026 sousforêt | Handcrafted with Care in Wolfenschiessen, Nidwalden
     </footer>
-
+/* --- OPTIMIERUNG FÜR PDF-EXPORT --- */
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 1.5cm;
+    }
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        background-color: #fdfdfd !important;
+    }
+    
+    /* Versteckt den Konfigurator im PDF */
+    #konfigurator {
+        display: none !important;
+    }
+    
+    /* Hero-Sektion anpassen */
+    .hero {
+        height: auto !important;
+        padding: 4cm 0 !important;
+        page-break-after: always;
+    }
+    .hero img {
+        max-width: 80% !important;
+        box-shadow: none !important;
+    }
+    
+    /* Story-Bilder und Texte perfekt auf A4 verteilen */
+    .feature-grid {
+        display: block !important;
+    }
+    .feature-item {
+        page-break-inside: avoid !important;
+        margin-bottom: 2cm !important;
+    }
+    .img-wrapper {
+        height: auto !important;
+        max-height: 12cm !important;
+        page-break-inside: avoid !important;
+        box-shadow: none !important;
+    }
+    .img-wrapper img {
+        max-height: 12cm !important;
+        object-fit: cover !important;
+    }
+    
+    /* Material-Sektion auf eine neue Seite */
+    .material-section {
+        page-break-before: always !important;
+        padding: 2cm 1cm !important;
+    }
+    .material-grid {
+        display: block !important;
+    }
+    .mat-item {
+        page-break-inside: avoid !important;
+        margin-bottom: 1.5cm !important;
+    }
+}
 </body>
 </html>
