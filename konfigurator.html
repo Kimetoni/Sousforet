@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Ski Configurator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #122c17; /* Tiefes Waldgrün sousforêt */
+            --accent: #A67C52; /* Holzton Esche */
+            --flax: #C2B28F; 
+            --bg: #f7f9f6; /* Sehr edles Natur-Offwhite */
+            --panel: #FFFFFF;
+            --text: #2c3e30;
+            --line-color: #d1d8d3;
+            --ee-color: #d35400; /* Edleres, dunkleres Orange/Rot für die Kante */
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .config-container {
+            width: 100%;
+            max-width: 1300px;
+            background: var(--panel);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(18, 44, 23, 0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- LAYOUT --- */
+        .main-grid {
+            display: flex;
+            flex-direction: row;
+            padding: 40px;
+            gap: 50px;
+        }
+
+        @media (max-width: 1000px) {
+            .main-grid { flex-direction: column; padding: 25px; }
+        }
+
+        .controls { flex: 0 0 420px; }
+
+        h3 {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #888;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        h3:first-child { margin-top: 0; }
+
+        /* --- BUTTONS --- */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .select-btn {
+            flex: 1;
+            text-align: center;
+            padding: 12px 8px;
+            background: #fcfcfc;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            color: #666;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .select-btn:hover { background: #f5f5f5; border-color: #d0d0d0; }
+        
+        .select-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(18, 44, 23, 0.2);
+        }
+
+        #mat-flax.active {
+            background: var(--flax);
+            border-color: var(--flax);
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(194, 178, 143, 0.4);
+        }
+
+        .sub-selector { display: flex; gap: 8px; margin-bottom: 30px; }
+        .sub-btn {
+            flex: 1; text-align: center; padding: 8px; background: #fff;
+            border: 1px solid #e5e5e5; cursor: pointer; font-size: 0.8em;
+            font-weight: 600; color: #888; border-radius: 6px; transition: all 0.2s;
+        }
+        .sub-btn.active { background: #eef2ef; color: var(--primary); border-color: var(--primary); }
+
+        /* --- SLIDERS MODERNISIERT --- */
+        .control-group { margin-bottom: 25px; transition: opacity 0.3s; }
+        .control-group label {
+            display: flex; justify-content: space-between; font-size: 0.9em;
+            font-weight: 600; margin-bottom: 12px; color: var(--text);
+        }
+        .highlight-label { color: var(--ee-color) !important; font-weight: 700 !important; }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]:focus { outline: none; }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #e8ece9;
+            border-radius: 3px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -7px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+        
+        input[type=range].ee-slider::-webkit-slider-thumb { background: var(--ee-color); }
+        input[type=range].ee-slider::-webkit-slider-runnable-track { background: #fbeee6; }
+
+        .hint-text { color: #999; font-size: 0.75em; display:block; margin-top:6px; font-weight: 400;}
+
+        /* --- VISUALIZATION --- */
+        .visualization { flex: 1; display: flex; flex-direction: column; gap: 25px; }
+
+        .svg-container {
+            width: 100%; background: #fafcfa; border: 1px solid #edf0ee;
+            border-radius: 12px; position: relative; padding: 20px 0; 
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        svg { width: 100%; height: auto; display: block; }
+
+        .ski-shape { stroke-width: 1; stroke: #8B633E; transition: fill 0.3s; }
+        .ski-side-profile { stroke: #122c17; stroke-width: 1.5; transition: fill 0.3s, d 0.4s ease-in-out; }
+        .measure-line { stroke: var(--line-color); stroke-width: 1; stroke-dasharray: 4 4; }
+        .measure-solid { stroke: #b0b8b3; stroke-width: 1; }
+        .measure-text { fill: #666; font-size: 11px; font-weight: 600; text-anchor: middle; letter-spacing: 0.5px;}
+        
+        .dir-text { fill: #a5afa7; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+
+        .ee-dimension-line { stroke: var(--ee-color); stroke-width: 1.5; transition: all 0.4s ease; }
+        .ee-dimension-text { fill: var(--ee-color); font-size: 11px; font-weight: bold; text-anchor: middle; transition: all 0.4s ease; }
+
+        .stats-bar {
+            background: #122c17; color: white; padding: 20px 30px;
+            border-radius: 12px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 20px rgba(18, 44, 23, 0.15);
+        }
+        .stats-bar h4 { margin: 0; font-family: 'Open Sans', sans-serif; font-size: 1em; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
+        .weight-display { font-size: 1.8em; font-family: 'Playfair Display', serif; color: var(--flax); }
+        .flax-color { color: #fff; }
+    </style>
+</head>
+<body>
+
+<div class="config-container">
+    <div class="main-grid">
+        <div class="controls">
+            
+            <h3>Einsatzgebiet & Basis</h3>
+            <div class="btn-group">
+                <div class="select-btn active" id="btn-freeride" onclick="setMainType('freeride')">Freeride</div>
+                <div class="select-btn" id="btn-backcountry" onclick="setMainType('backcountry')">Backcountry</div>
+            </div>
+            <div class="sub-selector" id="width-container"></div>
+
+            <h3>Material Konstruktion</h3>
+            <div class="btn-group">
+                <div class="select-btn active" id="mat-wood" onclick="setMaterial('wood')">Massivholz (Esche)</div>
+                <div class="select-btn" id="mat-flax" onclick="setMaterial('flax')">Esche + Flachs (Light)</div>
+            </div>
+
+            <h3>Ski Profil & Form</h3>
+            <div class="btn-group" style="gap: 8px;">
+                <div class="select-btn" id="prof-trad" onclick="setProfile('trad')">Traditional</div>
+                <div class="select-btn active" id="prof-rocker_camber" onclick="setProfile('rocker_camber')">Rocker Camber</div>
+                <div class="select-btn" id="prof-reverse" onclick="setProfile('reverse')">Reverse Camber</div>
+            </div>
+
+            <h3>Geometrie (Sidecut)</h3>
+            <div class="control-group">
+                <label>Gesamtlänge <span id="valLength">180 cm</span></label>
+                <input type="range" id="sliderLength" min="150" max="200" value="180" oninput="updateSki()">
+            </div>
+            <div class="control-group">
+                <label>Schaufelbreite (Tip) <span id="valTip">135 mm</span></label>
+                <input type="range" id="sliderTip" min="110" max="150" value="135" oninput="updateSki()">
+            </div>
+            <div class="control-group">
+                <label>Mittelbreite (Waist) <span id="valWaist">105 mm</span></label>
+                <input type="range" id="sliderWaist" min="80" max="120" value="105" oninput="updateSki()">
+            </div>
+            <div class="control-group">
+                <label>Heckbreite (Tail) <span id="valTail">125 mm</span></label>
+                <input type="range" id="sliderTail" min="100" max="140" value="125" oninput="updateSki()">
+            </div>
+
+            <h3>Spannung & Fahrdynamik</h3>
+            
+            <div class="control-group" id="group-ee-len">
+                <label class="highlight-label">Effective Edge Länge <span id="valEE">70 %</span></label>
+                <input type="range" class="ee-slider" id="sliderEE" min="30" max="85" value="70" oninput="updateSki()">
+                <span class="hint-text">Je kleiner der Wert, desto verspielter (längerer Rocker).</span>
+            </div>
+
+            <div class="control-group" id="group-ee-pos">
+                <label class="highlight-label">Camber Position Shift <span id="valEEPos">0 cm</span></label>
+                <input type="range" class="ee-slider" id="sliderEEPos" min="-15" max="15" value="0" step="1" oninput="updateSki()">
+                <span class="hint-text">Verschiebt die gesamte Kontaktfläche (- = Hinten, + = Vorne).</span>
+            </div>
+            
+            <div class="control-group" id="group-camber">
+                <label>Vorspannung (Camber Höhe) <span id="valCamber">3 mm</span></label>
+                <input type="range" id="sliderCamber" min="0" max="15" value="3" oninput="updateSki()">
+                <span class="hint-text">Wert 0 mm erzeugt ein Flat/Full Rocker Profil.</span>
+            </div>
+        </div>
+
+        <div class="visualization">
+            
+            <div class="stats-bar">
+                <div>
+                    <h4>Geschätztes Gewicht (Stk)</h4>
+                    <span style="font-size: 0.85em; opacity: 0.7; font-weight: 300;" id="mat-info">Konstruktion: 100% Regionale Esche</span>
+                </div>
+                <div class="weight-display" id="calc-weight">2250 g</div>
+            </div>
+
+            <!-- TOP VIEW -->
+            <div class="svg-container">
+                <svg viewBox="0 0 800 180" id="svgTop">
+                    <defs>
+                        <linearGradient id="woodGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#8B633E" />
+                            <stop offset="30%" stop-color="#A67C52" />
+                            <stop offset="70%" stop-color="#A67C52" />
+                            <stop offset="100%" stop-color="#8B633E" />
+                        </linearGradient>
+                        <linearGradient id="flaxGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#C2B28F" />
+                            <stop offset="50%" stop-color="#D4C3A3" />
+                            <stop offset="100%" stop-color="#C2B28F" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Konstante Orientierungstexte (Überlappen nicht) -->
+                    <text x="30" y="25" class="dir-text" text-anchor="start">HINTEN (TAIL)</text>
+                    <text x="770" y="25" class="dir-text" text-anchor="end">VORNE (TIP)</text>
+
+                    <!-- Bemaßungshilfen -->
+                    <line x1="30" y1="45" x2="770" y2="45" class="measure-solid" />
+                    <text x="400" y="40" class="measure-text" id="txtLength">Gesamtlänge: 180 cm</text>
+
+                    <line x1="65" y1="50" x2="65" y2="145" class="measure-line" />
+                    <line x1="400" y1="50" x2="400" y2="145" class="measure-line" />
+                    <line x1="735" y1="50" x2="735" y2="145" class="measure-line" />
+
+                    <!-- Ski Shape (Mitte bei y=100) -->
+                    <path id="topPath" class="ski-shape" fill="url(#woodGradient)" d="" />
+                    
+                    <text x="65" y="165" class="measure-text" id="txtTail">Tail</text>
+                    <text x="400" y="165" class="measure-text" id="txtWaist">Waist</text>
+                    <text x="735" y="165" class="measure-text" id="txtTip">Tip</text>
+                </svg>
+            </div>
+
+            <!-- SIDE VIEW -->
+            <div class="svg-container">
+                <svg viewBox="0 0 800 230" id="svgSide">
+                    
+                    <!-- Konstante Orientierungstexte -->
+                    <text x="30" y="25" class="dir-text" text-anchor="start">HINTEN (TAIL)</text>
+                    <text x="770" y="25" class="dir-text" text-anchor="end">VORNE (TIP)</text>
+
+                    <text x="400" y="40" class="measure-text" id="txtProfileType" fill="var(--primary)" style="font-size: 13px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">ROCKER CAMBER HYBRID</text>
+
+                    <!-- Shift Visualisierung -->
+                    <g id="shiftMarkerGroup">
+                        <line x1="400" y1="65" x2="400" y2="155" stroke="#d1d8d3" stroke-dasharray="3 3" stroke-width="1.5" />
+                        <text x="400" y="60" fill="#a5afa7" font-size="10" font-weight="bold" text-anchor="middle">Ski-Mitte</text>
+                        
+                        <line id="shiftLine" x1="400" y1="80" x2="400" y2="155" stroke="var(--ee-color)" stroke-width="1.5" />
+                        <text id="txtShift" x="400" y="72" fill="var(--ee-color)" font-size="11" font-weight="bold" text-anchor="middle">Camber Center</text>
+                    </g>
+
+                    <!-- Bodenlinie (Schnee) -->
+                    <line x1="10" y1="140" x2="790" y2="140" class="measure-line" stroke-dasharray="2 4" />
+                    
+                    <!-- Ski-Körper -->
+                    <path id="sidePathFull" class="ski-side-profile" fill="url(#woodGradient)" d="" />
+                    
+                    <!-- Effective Edge Bemaßung -->
+                    <g id="eeMarkerGroup">
+                        <line id="eeLineMain" x1="150" y1="175" x2="650" y2="175" class="ee-dimension-line" />
+                        <line id="eeLineLeft" x1="150" y1="165" x2="150" y2="185" class="ee-dimension-line" />
+                        <line id="eeLineRight" x1="650" y1="165" x2="650" y2="185" class="ee-dimension-line" />
+                        <rect id="eeTextBg" x="345" y="167" width="110" height="16" fill="#fafcfa" />
+                        <text id="eeText" x="400" y="179" class="ee-dimension-text">Effective Edge</text>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentType = 'freeride';
+    let currentMaterial = 'wood';
+    let currentProfile = 'rocker_camber';
+
+    const presets = {
+        'freeride': [
+            { w: 98, t: 130, ta: 118, len: 180, ee: 75, pos: -2, c: 4 },
+            { w: 108, t: 138, ta: 125, len: 185, ee: 70, pos: -4, c: 3 },
+            { w: 118, t: 145, ta: 132, len: 190, ee: 60, pos: -6, c: 0 } 
+        ],
+        'backcountry': [
+            { w: 85, t: 115, ta: 102, len: 165, ee: 85, pos: 0, c: 6 },
+            { w: 95, t: 125, ta: 112, len: 175, ee: 80, pos: -1, c: 5 },
+            { w: 105, t: 135, ta: 120, len: 180, ee: 75, pos: -3, c: 4 }
+        ]
+    };
+
+    function setMainType(type) {
+        currentType = type;
+        document.getElementById('btn-freeride').classList.remove('active');
+        document.getElementById('btn-backcountry').classList.remove('active');
+        document.getElementById('btn-' + type).classList.add('active');
+        renderSubSelectors();
+        loadPreset(1);
+    }
+
+    function renderSubSelectors() {
+        const container = document.getElementById('width-container');
+        container.innerHTML = '';
+        presets[currentType].forEach((p, index) => {
+            let btn = document.createElement('div');
+            btn.className = 'sub-btn';
+            btn.innerText = `Mitte: ${p.w} mm`;
+            btn.onclick = () => loadPreset(index);
+            container.appendChild(btn);
+        });
+    }
+
+    function loadPreset(index) {
+        let btns = document.querySelectorAll('.sub-btn');
+        btns.forEach(b => b.classList.remove('active'));
+        if(btns[index]) btns[index].classList.add('active');
+
+        let p = presets[currentType][index];
+        document.getElementById('sliderLength').value = p.len;
+        document.getElementById('sliderWaist').value = p.w;
+        document.getElementById('sliderTip').value = p.t;
+        document.getElementById('sliderTail').value = p.ta;
+        document.getElementById('sliderEE').value = p.ee;
+        document.getElementById('sliderEEPos').value = p.pos;
+        document.getElementById('sliderCamber').value = p.c;
+        updateSki();
+    }
+
+    function setMaterial(mat) {
+        currentMaterial = mat;
+        document.getElementById('mat-wood').classList.remove('active');
+        document.getElementById('mat-flax').classList.remove('active');
+        document.getElementById('mat-' + mat).classList.add('active');
+
+        let topPath = document.getElementById('topPath');
+        let sidePath = document.getElementById('sidePathFull');
+        let weightBox = document.getElementById('calc-weight');
+        let info = document.getElementById('mat-info');
+
+        if(mat === 'flax') {
+            topPath.setAttribute('fill', 'url(#flaxGradient)');
+            sidePath.setAttribute('fill', 'url(#flaxGradient)');
+            info.innerText = "Konstruktion: Flachs-Composite (Leichtbau)";
+        } else {
+            topPath.setAttribute('fill', 'url(#woodGradient)');
+            sidePath.setAttribute('fill', 'url(#woodGradient)');
+            info.innerText = "Konstruktion: 100% Regionale Esche (Massiv)";
+        }
+        updateSki();
+    }
+
+    function setProfile(prof) {
+        currentProfile = prof;
+        const profs = ['trad', 'rocker_camber', 'reverse'];
+        profs.forEach(p => document.getElementById('prof-' + p).classList.remove('active'));
+        document.getElementById('prof-' + prof).classList.add('active');
+        
+        let labels = {
+            'trad': 'TRADITIONAL CAMBER',
+            'rocker_camber': 'ROCKER CAMBER (HYBRID)',
+            'reverse': 'REVERSE CAMBER (BANANA)'
+        };
+        document.getElementById('txtProfileType').textContent = labels[prof];
+
+        const grpLen = document.getElementById('group-ee-len');
+        const grpPos = document.getElementById('group-ee-pos');
+        const grpCamber = document.getElementById('group-camber');
+        const markerGrp = document.getElementById('eeMarkerGroup');
+        const shiftGrp = document.getElementById('shiftMarkerGroup');
+
+        if (prof === 'trad') {
+            grpLen.style.opacity = '0.3'; document.getElementById('sliderEE').disabled = true;
+            grpPos.style.opacity = '0.3'; document.getElementById('sliderEEPos').disabled = true;
+            grpCamber.style.opacity = '1'; document.getElementById('sliderCamber').disabled = false;
+            markerGrp.style.display = 'block';
+            shiftGrp.style.display = 'none';
+        } 
+        else if (prof === 'rocker_camber') {
+            grpLen.style.opacity = '1'; document.getElementById('sliderEE').disabled = false;
+            grpPos.style.opacity = '1'; document.getElementById('sliderEEPos').disabled = false;
+            grpCamber.style.opacity = '1'; document.getElementById('sliderCamber').disabled = false;
+            markerGrp.style.display = 'block';
+            shiftGrp.style.display = 'block';
+        } 
+        else if (prof === 'reverse') {
+            grpLen.style.opacity = '0.3'; document.getElementById('sliderEE').disabled = true;
+            grpPos.style.opacity = '0.3'; document.getElementById('sliderEEPos').disabled = true;
+            grpCamber.style.opacity = '0.3'; document.getElementById('sliderCamber').disabled = true;
+            markerGrp.style.display = 'none';
+            shiftGrp.style.display = 'none';
+        }
+        
+        updateSki();
+    }
+
+    function updateSki() {
+        let length = parseInt(document.getElementById('sliderLength').value);
+        let tip = parseInt(document.getElementById('sliderTip').value);
+        let waist = parseInt(document.getElementById('sliderWaist').value);
+        let tail = parseInt(document.getElementById('sliderTail').value);
+        let eePerc = parseInt(document.getElementById('sliderEE').value);
+        let eePos = parseInt(document.getElementById('sliderEEPos').value);
+        let camber = parseInt(document.getElementById('sliderCamber').value);
+
+        document.getElementById('valLength').innerText = length + " cm";
+        document.getElementById('valTip').innerText = tip + " mm";
+        document.getElementById('valWaist').innerText = waist + " mm";
+        document.getElementById('valTail').innerText = tail + " mm";
+        document.getElementById('valEE').innerText = eePerc + " %";
+        document.getElementById('valEEPos').innerText = (eePos > 0 ? "+" : "") + eePos + " cm";
+        document.getElementById('valCamber').innerText = camber + " mm";
+        
+        document.getElementById('txtLength').textContent = "Gesamtlänge: " + length + " cm";
+        document.getElementById('txtTip').textContent = tip + " mm";
+        document.getElementById('txtWaist').textContent = waist + " mm";
+        document.getElementById('txtTail').textContent = tail + " mm";
+
+        let area = length * ((tip + waist + tail) / 3); 
+        let weight = area * 0.103; 
+        if(currentMaterial === 'flax') weight *= 0.75;
+        document.getElementById('calc-weight').innerText = Math.round(weight) + " g";
+
+        // TOP VIEW BERECHNUNG (Mitte = 100)
+        let scaleT = 0.22; 
+        let t = tip * scaleT; let w = waist * scaleT; let ta = tail * scaleT;
+        let cY = 100; 
+
+        let topPathD = `
+            M 65,${cY - ta}
+            C 200,${cY - ta} 350,${cY - w} 400,${cY - w}
+            C 450,${cY - w} 600,${cY - t} 735,${cY - t}
+            C 760,${cY - t} 770,${cY - t*0.5} 770,${cY}
+            C 770,${cY + t*0.5} 760,${cY + t} 735,${cY + t}
+            C 600,${cY + t} 450,${cY + w} 400,${cY + w}
+            C 350,${cY + w} 200,${cY + ta} 65,${cY + ta}
+            C 40,${cY + ta} 30,${cY + ta*0.5} 30,${cY}
+            C 30,${cY - ta*0.5} 40,${cY - ta} 65,${cY - ta} Z
+        `;
+        document.getElementById('topPath').setAttribute('d', topPathD);
+
+        // ==========================================
+        // SIDE VIEW BERECHNUNG 
+        // ==========================================
+        let gY = 140; // Base/Schnee Level
+        let sX = 20, eX = 780, midX = 400; 
+        let tK_Y = 115, tP_Y = 105; 
+        let thCenter = 14, thContact = 5, thTip = 2; 
+        
+        let visualLength = eX - sX; 
+        let rcX, fcX, cH;
+        let shiftPx = 0;
+
+        if (currentProfile === 'trad') {
+            let eePx = visualLength * 0.90; 
+            rcX = midX - (eePx / 2); fcX = midX + (eePx / 2);
+            cH = camber * 3;
+        } 
+        else if (currentProfile === 'rocker_camber') {
+            let eePx = visualLength * (eePerc / 100); 
+            shiftPx = eePos * 3; 
+
+            rcX = midX - (eePx / 2) + shiftPx; 
+            fcX = midX + (eePx / 2) + shiftPx;
+            
+            if (rcX < sX + 15) { let diff = (sX + 15) - rcX; rcX += diff; fcX += diff; }
+            if (fcX > eX - 15) { let diff = fcX - (eX - 15); rcX -= diff; fcX -= diff; }
+            
+            cH = camber * 3;
+            
+            // Shift Visualisierung Update
+            let shiftCenter = rcX + (fcX - rcX) / 2;
+            document.getElementById('shiftLine').setAttribute('x1', shiftCenter);
+            document.getElementById('shiftLine').setAttribute('x2', shiftCenter);
+            
+            let txtShiftEl = document.getElementById('txtShift');
+            txtShiftEl.textContent = eePos === 0 ? "Shift: 0" : "Shift: " + (eePos > 0 ? "+" : "") + eePos + " cm";
+            txtShiftEl.setAttribute('x', shiftCenter);
+        } 
+        else if (currentProfile === 'reverse') {
+            cH = 0; 
+        }
+
+        let bBody = "";
+        let tBody = "";
+
+        if (currentProfile === 'reverse') {
+            bBody = `M ${sX},${tK_Y} Q ${midX},${gY+15} ${eX},${tP_Y} `;
+            tBody = `C ${eX-50},${tP_Y-thTip} ${midX+100},${gY-thCenter} ${midX},${gY-thCenter} `;
+            tBody += `C ${midX-100},${gY-thCenter} ${sX+50},${tK_Y-thTip} ${sX},${tK_Y-thTip} `;
+            
+            let tipRound = `A ${thTip} ${thTip} 0 0 0 ${eX},${tP_Y-thTip} `;
+            let tailRound = `A ${thTip} ${thTip} 0 0 0 ${sX},${tK_Y} `;
+            document.getElementById('sidePathFull').setAttribute('d', bBody + tipRound + tBody + tailRound + "Z");
+        } 
+        else {
+            let tailRockerLen = rcX - sX;
+            let tipRockerLen = eX - fcX;
+
+            bBody = `M ${sX},${tK_Y} C ${sX + tailRockerLen*0.1},${tK_Y} ${rcX - tailRockerLen*0.7},${gY} ${rcX},${gY} `;
+
+            if (cH > 0) { 
+                bBody += `Q ${rcX + (fcX-rcX)/2},${gY - cH*2.5} ${fcX},${gY} `;
+            } else {
+                bBody += `L ${fcX},${gY} `;
+            }
+
+            bBody += `C ${fcX + tipRockerLen*0.7},${gY} ${eX - tipRockerLen*0.1},${tP_Y} ${eX},${tP_Y} `;
+
+            let tipRound = `A ${thTip} ${thTip} 0 0 0 ${eX},${tP_Y-thTip} `;
+            
+            tBody = `C ${eX - tipRockerLen*0.1},${tP_Y-thTip} ${fcX + tipRockerLen*0.7},${gY-thContact} ${fcX},${gY-thContact} `;
+
+            if (cH > 0) {
+                tBody += `Q ${rcX + (fcX-rcX)/2},${gY - cH*2.5 - thCenter} ${rcX},${gY-thContact} `;
+            } else {
+                tBody += `Q ${rcX + (fcX-rcX)/2},${gY - thCenter} ${rcX},${gY-thContact} `;
+            }
+
+            tBody += `C ${rcX - tailRockerLen*0.7},${gY-thContact} ${sX + tailRockerLen*0.1},${tK_Y-thTip} ${sX},${tK_Y-thTip} `;
+            
+            let tailRound = `A ${thTip} ${thTip} 0 0 0 ${sX},${tK_Y} `;
+
+            document.getElementById('sidePathFull').setAttribute('d', bBody + tipRound + tBody + tailRound + "Z");
+        }
+
+        // Bemaßungslinien
+        if(currentProfile !== 'reverse') {
+            document.getElementById('eeLineMain').setAttribute('x1', rcX);
+            document.getElementById('eeLineMain').setAttribute('x2', fcX);
+            document.getElementById('eeLineLeft').setAttribute('x1', rcX);
+            document.getElementById('eeLineLeft').setAttribute('x2', rcX);
+            document.getElementById('eeLineRight').setAttribute('x1', fcX);
+            document.getElementById('eeLineRight').setAttribute('x2', fcX);
+            
+            let textX = rcX + (fcX - rcX) / 2;
+            document.getElementById('eeText').setAttribute('x', textX);
+            document.getElementById('eeTextBg').setAttribute('x', textX - 55);
+        }
+    }
+
+    setMainType('freeride');
+    setProfile('rocker_camber');
+</script>
+
+</body>
+</html>

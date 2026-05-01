@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sousforêt | Custom Mountain Crafts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #122c17;
+            --accent: #A67C52;
+            --bg: #fdfdfd; 
+            --text: #2c3e30;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        /* --- HERO --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: #fff;
+            padding: 0 20px;
+        }
+
+        .hero img {
+            width: 550px;
+            max-width: 90%;
+            height: auto;
+            margin-bottom: 40px;
+            /* Leichter Schatten, damit das Logo edler wirkt */
+            filter: drop-shadow(0 15px 30px rgba(18, 44, 23, 0.1));
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 5.5em;
+            color: var(--primary);
+            margin: 0;
+            line-height: 0.8;
+        }
+
+        .hero p {
+            letter-spacing: 10px;
+            text-transform: uppercase;
+            color: #b5b5b5;
+            font-weight: 600;
+            margin-top: 30px;
+        }
+
+        /* --- STORY SEKTION --- */
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto 120px auto;
+            padding: 0 40px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 80px;
+        }
+
+        .feature-item .img-wrapper {
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+            border-radius: 4px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            background-color: #f5f5f5;
+        }
+
+        .feature-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .feature-item:hover img {
+            transform: scale(1.04);
+        }
+
+        .feature-item h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2em;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .feature-item p {
+            line-height: 1.9;
+            color: #666;
+            font-size: 1.1em;
+            font-weight: 300;
+        }
+
+        /* --- MATERIALPHILOSOPHIE --- */
+        .material-section {
+            background-color: #122c17;
+            color: white;
+            padding: 120px 40px;
+            text-align: center;
+        }
+
+        .material-content {
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        .material-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5em;
+            margin-bottom: 40px;
+            color: #C2B28F;
+        }
+
+        .material-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            text-align: left;
+            margin-top: 70px;
+        }
+
+        @media (max-width: 768px) {
+            .material-grid { grid-template-columns: 1fr; }
+        }
+
+        .mat-item h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(194, 178, 143, 0.3);
+            padding-bottom: 15px;
+            color: #C2B28F;
+        }
+
+        .mat-item p {
+            font-weight: 300;
+            line-height: 1.8;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        /* --- KONFIGURATOR PLATZHALTER --- */
+        .config-container-fixed {
+            background: #fff;
+            padding: 120px 0;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .config-header {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .config-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.8em;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .config-header p {
+            color: #999;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+
+        .config-iframe-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Iframe drastisch vergrössert, um Scrollbalken zu vermeiden */
+        iframe {
+            width: 100%;
+            height: 1400px; 
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 50px 120px rgba(0,0,0,0.08);
+            background: #fff;
+        }
+
+        footer {
+            text-align: center;
+            padding: 80px 20px;
+            font-size: 0.85em;
+            color: #999;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO -->
+    <section class="hero">
+        <!-- Logo Dateiname korrigiert (versucht logo.jpg, fällt sonst auf logo.png zurück) -->
+        <img src="logo.jpg" onerror="this.onerror=null;this.src='logo.png';" alt="sousforêt Logo">
+        <h1>sousforêt</h1>
+        <p>Radical Regionality & Custom Crafts</p>
+    </section>
+
+    <!-- STORY -->
+    <section class="content-section">
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="img-wrapper">
+                    <img src="landing_materials.jpg" alt="Schreinerei">
+                </div>
+                <h2>Regionale Seele</h2>
+                <p>Nidwaldner Esche aus den Wäldern rund um Wolfenschiessen bildet das Herzstück. Wir nutzen lokale Ressourcen für Skier, die am Berg performen und eine ehrliche Geschichte erzählen. Nachhaltig, regional, echt.</p>
+            </div>
+            <div class="feature-item">
+                <div class="img-wrapper">
+                    <img src="landing_craft.jpg" alt="Freerider">
+                </div>
+                <h2>Echte Manufaktur</h2>
+                <p>Von der Sidecut-Planung bis zum letzten Schliff – wir fertigen jedes Paar mit grösster Sorgfalt in unserer Werkstatt in Wolfenschiessen. Ein händisch gefertigtes Unikat, präzise abgestimmt auf deine Bedürfnisse.</p>
+            </div>
+            <div class="feature-item">
+                <div class="img-wrapper">
+                    <img src="landing_workshop.jpg" alt="Holzhobel">
+                </div>
+                <h2>Offene Werkstatt</h2>
+                <p>Besuche uns in Wolfenschiessen auf ein Fachgespräch. Wir glauben an absolute Transparenz und den direkten Austausch zwischen Bauer und Fahrer. Handwerk zum Anfassen und Spüren direkt an der Hobelbank.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MATERIALPHILOSOPHIE -->
+    <section class="material-section">
+        <div class="material-content">
+            <h2>Unsere Materialphilosophie</h2>
+            <p style="font-size: 1.3em; font-weight: 300; line-height: 1.6;">Wir verzichten auf unnötigen Kunststoff und setzen auf die rohe Kraft der Natur. Du wählst zwischen zwei radikal nachhaltigen Konstruktionswegen:</p>
+            
+            <div class="material-grid">
+                <div class="mat-item">
+                    <h3>Lokales Eschenholz</h3>
+                    <p>Die Nidwaldner Esche ist bekannt für ihre extremen Rückstellkräfte und Langlebigkeit. Als massiver Holzkern verarbeitet, bietet sie eine unvergleichliche Laufruhe und einen natürlichen Flex, der über Jahre hinweg lebendig bleibt.</p>
+                </div>
+                <div class="mat-item">
+                    <h3>Nachhaltige Flachsfaser</h3>
+                    <p>Als ökologische Antwort auf synthetische Verbundstoffe nutzen wir hochfeste Flachsfasern. Sie dämpfen Vibrationen effektiver als Carbon oder Glasfaser und machen den Ski spürbar leichter – perfekt für den Aufstieg und stabil in der Abfahrt.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- KONFIGURATOR PLATZHALTER -->
+    <section class="config-container-fixed" id="konfigurator">
+        <div class="config-header">
+            <h2>Gestalte dein Unikat</h2>
+            <p>Interaktiver Konstruktionsprozess</p>
+        </div>
+
+        <div class="config-iframe-wrapper">
+            <!-- Platzhalter iframe massiv vergrössert -->
+            <iframe src="konfigurator.html" title="sousforêt Konfigurator"></iframe>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 sousforêt | Handcrafted with Care in Wolfenschiessen, Nidwalden
+    </footer>
+
+</body>
+</html>
