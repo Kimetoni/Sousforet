@@ -206,7 +206,7 @@
             letter-spacing: 2px;
             text-transform: uppercase;
         }
-        /* --- OPTIMIERUNG FÜR PDF-EXPORT --- */
+        /* --- OPTIMIERUNG FÜR PDF-EXPORT (INKLUSIVE KONFIGURATOR) --- */
 @media print {
     @page {
         size: A4 portrait;
@@ -216,11 +216,6 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
         background-color: #fdfdfd !important;
-    }
-    
-    /* Versteckt den Konfigurator im PDF */
-    #konfigurator {
-        display: none !important;
     }
     
     /* Hero-Sektion anpassen */
@@ -264,6 +259,19 @@
     .mat-item {
         page-break-inside: avoid !important;
         margin-bottom: 1.5cm !important;
+    }
+
+    /* --- KONFIGURATOR FÜR DEN DRUCK SICHTBAR MACHEN --- */
+    #konfigurator {
+        display: block !important;
+        page-break-before: always !important; /* Startet sauber auf einer neuen Seite */
+    }
+    
+    /* Dem Iframe eine feste Höhe geben, damit er auf A4 nicht abgeschnitten wird */
+    .config-iframe-wrapper iframe {
+        height: 1400px !important; 
+        width: 100% !important;
+        overflow: visible !important;
     }
 }
     </style>
